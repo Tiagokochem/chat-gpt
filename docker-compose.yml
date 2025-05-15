@@ -4,7 +4,6 @@ services:
   mysql:
     image: mysql:8
     container_name: chat-mysql
-    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: chatgpt
@@ -15,28 +14,7 @@ services:
 
   adminer:
     image: adminer
+    container_name: chat-adminer
     restart: always
     ports:
-      - 8080:8080
-
-  backend:
-    build:
-      context: ./backend
-    container_name: chat-backend
-    restart: always
-    ports:
-      - "3001:3001"
-    volumes:
-      - ./backend:/app
-    depends_on:
-      - mysql
-
-  frontend:
-    build:
-      context: ./frontend
-    container_name: chat-frontend
-    restart: always
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend:/app
+      - "8080:8080"
