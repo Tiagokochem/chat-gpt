@@ -1,47 +1,48 @@
 import { useEffect, useState } from 'react';
-import { api } from '../services/api';
+import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
 
-export function ChatList() {
+export default function ChatList() {
   const [chats, setChats] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    loadChats();
+    api.get('/chats').then((res) => setChats(res.data));
   }, []);
 
-  const loadChats = () => {
-    api.get('/chats').then(response => setChats(response.data));
-  };
-
-  const handleNewChat = async () => {
-    try {
-      const response = await api.post('/chats', {
-        title: `Chat #${chats.length + 1}`,
-        userId: 1, // se tiver login, isso muda depois
-      });
-
-      const chatId = response.data.id;
-      navigate(`/chat/${chatId}`);
-    } catch (err) {
-      console.error('Erro ao criar novo chat', err);
-    }
+  const createChat = async () => {
+    const res = await api.post('/chats', {
+      title: 'Novo chat',
+      userId: 1,
+    });
+    navigate(`/chat/${res.data.id}`);
   };
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <h1>Seus Chats</h1>
-      <button onClick={handleNewChat}>➕ Novo Chat</button>
+    <div className="min-h-screen bg-gray-100 p-6">
+      <div className="max-w-md mx-auto bg-white rounded-xl shadow-md p-6">
+        <h1 className="text-2xl font-bold text-gray-800 mb-4">🧠 Seus Chats</h1>
 
-      <ul style={{ marginTop: '1rem' }}>
-        {chats.map(chat => (
-          <li key={chat.id}>
-            <button onClick={() => navigate(`/chat/${chat.id}`)}>
-              {chat.title}
-            </button>
-          </li>
-        ))}
-      </ul>
+        <button
+          onClick={createChat}
+          className="flex items-center gap-2 text-purple-600 font-medium hover:text-purple-800 mb-6"
+        >
+          <span className="text-xl">➕</span>
+          Novo Chat
+        </button>
+
+        <ul className="space-y-2">
+          {chats.map((chat: any) => (
+            <li
+              key={chat.id}
+              onClick={() => navigate(`/chat/${chat.id}`)}
+              className="cursor-pointer px-4 py-2 rounded hover:bg-purple-100 transition"
+            >
+              🗨️ {chat.title}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
