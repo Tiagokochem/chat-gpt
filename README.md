@@ -94,6 +94,10 @@ npm run dev
 - Explicação técnica: 🔗 Em Breve
 
 ---
+![Screenshot_6](https://github.com/user-attachments/assets/1312ac68-49ec-4809-b080-b5fe9585de4e)
+![Screenshot_5](https://github.com/user-attachments/assets/47358e69-fd17-4e1d-a2e8-df8374d23f09)
+
+
 
 ## 📄 Licença
 
