@@ -14,7 +14,14 @@ export class UsersService {
     return this.userRepo.find();
   }
 
-  create(user: Partial<User>): Promise<User> {
+  async create(name: string): Promise<User> {
+    const email = `${name.toLowerCase()}@fake.com`;
+
+    let user = await this.userRepo.findOneBy({ email });
+
+    if (user) return user;
+
+    user = this.userRepo.create({ name, email });
     return this.userRepo.save(user);
   }
 }

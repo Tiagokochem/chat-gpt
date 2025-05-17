@@ -1,29 +1,52 @@
 import { useEffect, useState } from 'react';
 import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 export default function ChatList() {
   const [chats, setChats] = useState([]);
   const navigate = useNavigate();
-  
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('chat_user') || '{}');
-
-    if (user?.id) {
-      api.get(`/chats?userId=${user.id}`).then((res) => {
-        setChats(res.data);
-      });
-    }
-  }, []);
+  const location = useLocation();
 
   const user = JSON.parse(localStorage.getItem('chat_user') || '{}');
+
+  const fetchChats = async () => {
+    if (user?.id) {
+      const res = await api.get(`/chats?userId=${user.id}`);
+      setChats(res.data);
+    }
+  };
+
+  useEffect(() => {
+    fetchChats();
+
+    // Atualiza a lista quando o usuário voltar para a aba
+    window.addEventListener('focus', fetchChats);
+
+    return () => {
+      window.removeEventListener('focus', fetchChats);
+    };
+  }, []);
+  useEffect(() => {
+    fetchChats();
+  }, [location]);
 
   const createChat = async () => {
     const res = await api.post('/chats', {
       title: 'Novo chat',
       userId: user.id,
     });
-    navigate(`/chat/${res.data.id}`);
+
+    const novoChat = res.data;
+    setChats((prev) => [novoChat, ...prev]);
+
+    navigate(`/chat/${novoChat.id}`);
+  };
+
+
+  const deleteChat = async (id: number) => {
+    await api.delete(`/chats/${id}`);
+    setChats((prev) => prev.filter((chat) => chat.id !== id));
   };
 
   return (
@@ -43,10 +66,20 @@ export default function ChatList() {
           {chats.map((chat: any) => (
             <li
               key={chat.id}
-              onClick={() => navigate(`/chat/${chat.id}`)}
-              className="cursor-pointer px-4 py-2 rounded hover:bg-purple-100 transition"
+              className="flex justify-between items-center px-4 py-2 rounded hover:bg-purple-100 transition"
             >
-              🗨️ {chat.title}
+              <span
+                onClick={() => navigate(`/chat/${chat.id}`)}
+                className="cursor-pointer"
+              >
+                🗨️ {chat.title}
+              </span>
+              <button
+                onClick={() => deleteChat(chat.id)}
+                className="text-red-500 hover:text-red-700"
+              >
+                🗑️
+              </button>
             </li>
           ))}
         </ul>

@@ -12,7 +12,7 @@ export class UsersController {
   }
 
   @Post()
-  create(@Body() user: Partial<User>): Promise<User> {
-    return this.usersService.create(user);
+  async create(@Body() body: { name: string }): Promise<User> {
+    return this.usersService.create(body.name);
   }
 }
