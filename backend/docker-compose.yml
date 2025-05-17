@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: chat-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: chatgpt
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  backend:
+    build:
+      context: ./backend
+    container_name: chat-backend
+    restart: always
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - mysql
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: chat-frontend
+    restart: always
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
