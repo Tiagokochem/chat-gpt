@@ -10,7 +10,7 @@ export class ChatsService {
   constructor(
     @InjectRepository(Chat) private chatRepo: Repository<Chat>,
     @InjectRepository(User) private userRepo: Repository<User>,
-  ) {}
+  ) { }
 
   async create(title: string, userId: number): Promise<Chat> {
     const user = await this.userRepo.findOneBy({ id: userId });
@@ -18,7 +18,11 @@ export class ChatsService {
     return this.chatRepo.save(chat);
   }
 
-  findAll(): Promise<Chat[]> {
-    return this.chatRepo.find();
+  async findByUser(userId: number): Promise<Chat[]> {
+    return this.chatRepo.find({
+      where: { user: { id: userId } },
+      relations: ['user', 'messages'], // se quiser trazer os dados relacionados
+      order: { createdAt: 'DESC' }, // opcional
+    });
   }
 }

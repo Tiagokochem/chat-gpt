@@ -1,13 +1,15 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query } from '@nestjs/common';
 import { ChatsService } from './chats.service';
+import { Chat } from './chat.entity';
+
 
 @Controller('chats')
 export class ChatsController {
-  constructor(private readonly chatsService: ChatsService) {}
+  constructor(private readonly chatsService: ChatsService) { }
 
   @Get()
-  findAll() {
-    return this.chatsService.findAll();
+  async getUserChats(@Query('userId') userId: number): Promise<Chat[]> {
+    return this.chatsService.findByUser(userId);
   }
 
   @Post()

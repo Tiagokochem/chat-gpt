@@ -5,15 +5,23 @@ import { useNavigate } from 'react-router-dom';
 export default function ChatList() {
   const [chats, setChats] = useState([]);
   const navigate = useNavigate();
-
+  
   useEffect(() => {
-    api.get('/chats').then((res) => setChats(res.data));
+    const user = JSON.parse(localStorage.getItem('chat_user') || '{}');
+
+    if (user?.id) {
+      api.get(`/chats?userId=${user.id}`).then((res) => {
+        setChats(res.data);
+      });
+    }
   }, []);
+
+  const user = JSON.parse(localStorage.getItem('chat_user') || '{}');
 
   const createChat = async () => {
     const res = await api.post('/chats', {
       title: 'Novo chat',
-      userId: 1,
+      userId: user.id,
     });
     navigate(`/chat/${res.data.id}`);
   };

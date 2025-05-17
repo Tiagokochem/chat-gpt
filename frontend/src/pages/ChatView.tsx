@@ -36,26 +36,25 @@ export default function ChatView() {
     await loadMessages();
     setLoading(false);
   };
+  const user = JSON.parse(localStorage.getItem('chat_user') || '{}');
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 p-4">
       <div className="max-w-2xl w-full mx-auto bg-white shadow-md rounded-lg flex flex-col p-4 flex-grow overflow-y-auto">
-        <h2 className="text-xl font-bold text-gray-700 mb-4">🗨️ Chat</h2>
+        <h2 className="text-xl font-bold mb-4">💬 Chat com {user.name}</h2>
 
         <div className="flex flex-col space-y-3 mb-4 overflow-y-auto">
           {messages.map((msg) => (
             <div
               key={msg.id}
-              className={`flex ${
-                msg.role === 'user' ? 'justify-end' : 'justify-start'
-              }`}
+              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'
+                }`}
             >
               <div
-                className={`px-4 py-2 rounded-xl max-w-sm break-words ${
-                  msg.role === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-800'
-                }`}
+                className={`px-4 py-2 rounded-xl max-w-sm break-words ${msg.role === 'user'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 text-gray-800'
+                  }`}
               >
                 {msg.content}
               </div>
